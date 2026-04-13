@@ -1,0 +1,46 @@
+# mcp_bridge_tier2.refs — Citation reference table for mcp_bridge_tier2.bpd
+#
+# Each row: RefNum | Type | Concept | SpecId | Location | Section | Reasoning
+#
+# Referenced from .bpd code via #«N» comments.
+# Referenced from .bpd provenance via N. cites() or N. adopts().
+#
+# Type: cites (normative), adopts (conventional), provenance (internal)
+
+# ── Normative citations ──────────────────────────────────────────────────
+
+1  | cites   | :protocol, :http_sse_2024_11_05     | mcp-2024-11-05          | docs/references/mcp/mcp-transports-2024-11-05.md           |          | MCP specifies HTTP+SSE as a transport option and JSON-RPC as content grammar
+2  | cites   | :content, :json_rpc                  | jsonrpc-2.0             | docs/references/jsonrpc/jsonrpc-2.0.md                     |          | JSON-RPC 2.0 defines request, response, notification, error message kinds
+3  | cites   | :framing, :content_length            | rfc9110                 | docs/references/rfcs/rfc9110-http-semantics.txt            | 8.6      | Content-Length header defines request body framing (client→server POST direction)
+4  | cites   | :transport, :sse                     | whatwg-html-sse         | docs/references/rfcs/server-sent-events-whatwg.md           |          | SSE defines server→client event stream framing (empty-line delimited events)
+5  | cites   | :dimension, :session_id              | rfc4122                 |                                                            |          | UUID format per RFC 4122; SDK uses uuid4
+6  | cites   | :jsonrpc_request                     | jsonrpc-2.0             | docs/references/jsonrpc/jsonrpc-2.0.md                     |          | Request object has method, params, and id fields
+7  | cites   | :jsonrpc_response                    | jsonrpc-2.0             | docs/references/jsonrpc/jsonrpc-2.0.md                     |          | Response object has either result OR error, plus id
+8  | cites   | :jsonrpc_error                       | jsonrpc-2.0             | docs/references/jsonrpc/jsonrpc-2.0.md                     |          | Error object has code, message, and optional data
+9  | cites   | :jsonrpc_notification                | jsonrpc-2.0             | docs/references/jsonrpc/jsonrpc-2.0.md                     |          | Notification is a Request WITHOUT an id field — field absent, not null
+10 | cites   | :create_session                      | python-sdk              | docs/references/mcp/python-sdk-sse-transport.md            |          | SDK generates uuid4 per GET /sse connection; session_id routes POSTs
+11 | cites   | :destroy_session                     | python-sdk              | docs/references/mcp/python-sdk-sse-transport.md            |          | SDK removes session from dict when SSE stream context manager exits
+12 | cites   | :http_404_response                   | python-sdk              | docs/references/mcp/python-sdk-sse-transport.md            |          | SDK returns 404 "Could not find session" for unknown session_id
+
+# ── Conventional adoptions ───────────────────────────────────────────────
+
+13 | adopts  | :path, "/messages/"                  | python-sdk v1.x         | docs/references/mcp/python-sdk-v1.x-sse.py                | line 79  | SDK example convention; not spec-mandated
+14 | adopts  | :path, "/messages/"                  |                         |                                                            |          | Interoperability with reference SDK clients; breaking it fragments ecosystem
+15 | adopts  | :session_id_transport, query_param    | python-sdk v1.x         | docs/references/mcp/python-sdk-v1.x-sse.py                |          | SDK constructs endpoint URL with ?session_id=<hex>
+16 | adopts  | :post_response_code, 202             | python-sdk v1.x         | docs/references/mcp/python-sdk-v1.x-sse.py                |          | SDK returns HTTP 202 Accepted for valid POSTs; response via SSE
+17 | adopts  | :url_with_query                      | python-sdk v1.x         | docs/references/mcp/python-sdk-v1.x-sse.py                |          | SDK constructs '{root_path}{endpoint}?session_id={hex}'
+18 | adopts  | :extract_query                       |                         |                                                            |          | Dual of url_with_query; symmetric parse/construct
+19 | adopts  | :sse_stream_for                      |                         |                                                            |          | Routing function: session_id → SSE stream for that session
+20 | adopts  | :prior_emit                          |                         |                                                            |          | Stateful guard: client cannot POST until endpoint event received
+21 | adopts  | :session_exists                      |                         |                                                            |          | Session lifetime check for 404 rule
+
+# ── Internal provenance ──────────────────────────────────────────────────
+
+22 | provenance | :bpd_tier_2                       | conversation(45)        | window(944)                                                |          | BPD Tier II concept originated in conversation 45
+23 | provenance | :bpd_tier_2                       | commit                  | d00f5d171                                                  |          | Initial commit of this file
+24 | provenance | :backend_domains                  |                         |                                                            |          | Three-domain separation (visual, code, test) established April 7, 2026
+25 | provenance | :citation_provenance_backend      |                         |                                                            |          | Fourth backend domain proposed by Heath, April 8, 2026. Supports Svadhyaya.
+26 | provenance | :framing_vs_content_separation    | commit                  | cebddea5c                                                 |          | Framing and content are independent concerns
+27 | provenance | :derived_actors                   | commit                  | bfd1fce37                                                  |          | actor(X) :- process(X). Renamed :agent to :client.
+28 | provenance | :conformance_extraction           | commit                  | f9b116e88                                                  |          | Moved to policy.bpd and polyarchitecture.bpd
+29 | provenance | :http_sse_resolution              | commit                  | 3a7e1f212                                                  |          | Review: 5 accuracy issues in HTTP+SSE protocol sequence

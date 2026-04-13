@@ -1,0 +1,36 @@
+# policy.bpd — Collective-wide invariants for DSL-defined projects
+#
+# These policies apply to ALL projects defined by our DSLs, not to any
+# specific protocol or implementation.
+
+# The quantity of testable invariants derived from a project's DSL spec
+# should be non-decreasing. As our understanding of software testing
+# improves, the test count grows. The test count is a downstream product
+# of the spec, never an input.
+#
+# TODO: express declaratively when the DSL supports quantification over projects
+# policy(non_decreasing_test_invariants).
+
+# Meta-policy: every concept declared in any .bpd file MUST have at least
+# one provenance link (cites, adopts, or provenance). Unmotivated concepts
+# are a code smell — they indicate design decisions without traceable origin.
+#
+# TODO: express declaratively when the DSL supports quantification
+# policy(every_concept_has_provenance).
+
+# ── PROVENANCE ──────────────────────────────────────────────────────────
+
+provenance(:non_decreasing_test_invariants,
+  reasoning("As our understanding of software testing improves, the test "
+            "count should grow. The count is a downstream product of the "
+            "spec, never an input. Extracted from mcp_bridge_tier2.bpd "
+            "during review, April 7 2026.")).
+
+provenance(:policy_bpd,
+  commit("f9b116e88")).  # creation commit
+
+provenance(:every_concept_has_provenance,
+  reasoning("Heath proposed Citation-Provenance as fourth backend domain, "
+            "April 8 2026. Making this a meta-policy ensures the backend "
+            "can flag unmotivated concepts and future agents can trace "
+            "every decision to its origin.")).

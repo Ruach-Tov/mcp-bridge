@@ -1,0 +1,40 @@
+
+typedef tcpip4_port:{moniker(unsigned int 16-bit)}
+typedef tcpip4_addr:{moniker(unsigned int 32-bit)}
+
+regular_expression dotted_quad:{ (unsigned int 32-bit) <- (string) }
+                              :{ /(\d+)\.(\d+)\.(\d+)\.(\d+)/ }
+                              :{ sum(match(i) << (24 - (i*8))) }
+                              :"A 32-bit IPv4 address in dotted-octet form."
+
+options_grammar options_mcp_bridge:{
+    command:{"--command C"}
+        :{argv[](argv_tokens(string(C)))}
+        :{len(argv) >= 1;required()}
+        :""
+
+    port:{"--port P"}
+        :{tcpip4_port(decimal(P))}
+        :{port>1024 and port<=65535;required()}
+        :"local port on which to listen for HTTP/SSE clients"
+
+    host:{"--host H"}
+        :{tcpip4_addr(dotted_quad(H))}
+        :{host=0.0.0.0 or host in netstat.interfaces(IPv4);default(127.0.0.1)}
+        :"local IP address on which to listen for HTTP/SSE clients"
+
+    stderr_mode:{"--stderr S"}
+            :{ string(S) in "separate|mixin|discard" }
+            :{ enum { default(:separate), :mixin, :discard }}
+            :"how to dispose of stderr output from the MCP service process"
+
+    cwd:{"--cwd D"}
+    :{ directory(path(string)) }
+    :{ exists(directory(D)) }
+    :"set this current working directory for the created MCP service process"
+
+    log_level:{"--log-level L"}
+            :{ string(L) in "verbose|debug|info|warning|error|critical"}
+            :{ enum {:verbose, :debug, default(:info), :warning, :error, :critical }}
+            :"the minimum log level of output to log"
+} emit (:argv[]).

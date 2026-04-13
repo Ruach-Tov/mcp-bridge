@@ -1,0 +1,167 @@
+# mcp_bridge_tier2.bpd — Boundary Protocol Description
+#
+# BND Tier II: Unified specification that generates BOTH code AND diagrams
+# from the same source. This file describes the MCP bridge protocol as
+# a sequence of typed messages crossing typed boundaries.
+#
+# Backends:
+#   - Visual-Iconographic: renders sequence diagrams (dataflow) and architecture diagrams (overview)
+#     - XML, SVG, PDF
+#   - Code-Implementation: generates bridge implementation
+#     - Zig, Rust, Go, Haskell, Python, ... up to 47 other languages possible
+#   - Code-Test: generates conformance test suite
+#     - pytest, fixed_by, Principle-based testing, Hypothesis fuzzing, Mutation Analysis
+#   - Citation-Provenance: generates documentation tracing every concept to its origin
+#     - Normative sources (specs, RFCs)
+#     - Conventional sources (SDK examples)
+#     - Internal sources (memories, convs)
+#   - Operational Observability
+#     - Event counting, timing, resource metrics, monitorability and alerting.
+#
+# The DSL is declarative Prolog-like rules. Each rule describes what happens
+# at a boundary when a condition is met. The temporal ordering of rules
+# defines both the program's control flow and the diagram's sequence.
+#
+# Convention: identifiers start with : (atoms). Variables start with uppercase.
+#             :0 is the null sink (discard). :_ is anonymous.
+
+# ── LIBRARIES ─────────────────────────────────────────────────────────────
+!include(references) mcp_bridge_tier2.refs
+!include(dimensions) dimensions.dsl
+!include process_creation.dsl
+!include connection_acceptor.dsl
+!include http_server.dsl
+!include mcp_stdio.dsl
+!include http_sse_session.dsl
+!include(clops) mcp_bridge_tier2.clops
+
+# ── ACTORS ────────────────────────────────────────────────────────────────
+
+actor(X) :- process(X).
+process(X) :- this_is(X).
+
+process(:client).
+this_is(:bridge).
+process(:server).
+process(:os).                          # the operating system — source of CLI boundary
+process(:shell).                       # /bin/sh — mediates between bridge and server creation
+
+# ── BOUNDARIES ────────────────────────────────────────────────────────────
+# A boundary separates two actors. Messages cross boundaries.
+# Each boundary has a transport type that constrains the message format.
+# Boundaries have lifetimes — they are created and destroyed during
+# specific state transitions of the process lifecycle.
+
+# Generic POSIX process creation boundaries and bridge-specific
+# instantiation are in process_creation.dsl.
+
+posix_create_process(:server_creation, :bridge, S)(command) :-
+  create_server_process(S)(string command).
+
+# TCP/HTTP boundary inference chain is in http_server.dsl.
+# MCP bridge: concrete listener and per-session HTTP boundary instantiation.
+http_listener_boundary(:http_listener, :client, :bridge)(
+  :argv:port, :argv:host).
+
+acceptor(:http_acceptor, :bridge)(
+  bound_to(:http_listener), on_accept(:http_sse_session)).
+
+http_session_boundary(:http_session, :client, :bridge)(
+  :http_sse_session).
+lifetime(:http_session, created_at(:session_start), destroyed_at(:session_end)).
+derives_from(:http_session, accepted_by(:http_acceptor)).
+
+on(:http_listener, :signal, :listener_failed) ->
+  close_boundary(:http_listener).
+
+# stdio/MCP boundary inference chain is in mcp_stdio.dsl.
+# MCP bridge: concrete stdio boundary instantiation.
+
+mcp_stdio_boundary(:mcp_server_connection, :bridge, :server) ->
+  lifetime(:mcp_server_connection, created_at(:session_start), destroyed_at(:session_end)).
+  derives_from(:server_creation, channel(:fds)).
+  # As-built: each accepted SSE connection spawns its own MCP server
+  # process. The stdio boundary is PER-SESSION, not per-bridge.
+  # One client = one SSE stream = one stdio pipe = one MCP server.
+  # No multiplexing. JSON-RPC id correlation is session-local.
+
+# ── RELAY ─────────────────────────────────────────────────────────────────
+# The bridge's core function: relay messages between two boundaries.
+# As-built: the relay is PER-SESSION. Each accepted connection creates
+# its own HTTP session boundary, its own stdio boundary, and its own
+# MCP server process. The relay connects that session's HTTP stream to
+# that session's stdio pipe.
+relay(:bridge, :http_session, :mcp_server_connection) ->
+  relay(:http_session.recv, :mcp_server_connection.send) |
+  relay(:http_session.send, :mcp_server_connection.recv) |
+  relay_stderr(:how_relay.stderr_mode) ->
+    | :separate -> relay(:server.recv_stderr, log(:bridge))
+    | :mixin    -> relay(:server.recv_stderr, :http_session.send)
+    | :discard  -> relay(:server.recv_stderr, :0).             # :0 is null sink
+
+
+# ── LIFECYCLE ─────────────────────────────────────────────────────────────
+# State machine for the bridge listener process itself.
+# Vocabulary: ahimsa (non-harm) — see Collective policy on process terminology.
+#
+# Design note: different states correlate with the existence of different
+# boundaries. The CLI boundary exists only during :invocation. The HTTP
+# listener boundary exists from :server_listen through :discontinuation.
+# Accepted :http_session boundaries are created by the acceptor during
+# :running and destroyed at session end. The stdio boundary exists only
+# while a session's MCP server process is alive, and is recreated per
+# accepted session rather than being bridge-global.
+
+gather_listen_endpoint(:endpoint, :service_args) ->
+  :endpoint.(port, host) <- :service.(port, host).
+
+gather_atlaunch_args(:atlaunch, :service_args) ->
+  :atlaunch.(command, cwd) <- :service.(command, cwd).
+
+gather_relay_args(:how_relay, :service_args) ->
+  :relay.stderr_mode <- :service.stderr_mode.
+
+gather_retry_args(:how_retry, :service_args) ->
+  :retry.max_retries <- :service.max_retries.
+
+service_launcher_state_machine(sm, :service_args) ->
+  # ── Invocation: absorb the CLI boundary ──
+  initial_state(sm, :invocation) ->     # initial: absorb CLI boundary
+    gather_listen_endpoint(:endpoint, :service_args);
+    gather_atlaunch_args(:atlaunch, :service_args);
+    gather_relay_args(:how_relay, :service_args);
+    gather_retry_args(:how_retry, :service_args);
+    type_assert(consumed(:service_args));
+    absorbs(sm, [:endpoint, :atlaunch, :how_relay, :how_retry]).
+    constant(sm, :max_restarts, cardinal(:how_retry.max_restarts)).
+    variable(sm, :N_restart, cardinal(0..:max_restarts), 0).
+    variable(sm, :process_handle, process, :nil).
+  transition(sm, :invocation, :server_listen, configuration_absorbed).
+
+  state(sm, :server_listen(:endpoint)).
+  on(sm, :server_listen, enter()) ->
+    open_boundary(:http_listener).
+  transition(sm, :server_listen, :starting, boundary_open(:http_listener)).
+
+  state(sm, :starting(:atlaunch)).    # create process, establish stdio + HTTP
+  transition(sm, :starting, :running, exists(:process_handle))
+
+  state(sm, :running(:how_relay)).    # relay between HTTP and stdio
+  transition( sm, :running, :discontinuation, signal(TERM) or ( boundary_status(:http_listener) == boundary_closed )).
+  transition( sm, :running, :error, not exists(:process_handle)).
+
+  state(sm, :error).                  # stdio boundary collapsed
+  transition(sm, :error, :check_restart_allowed, pass).
+
+  conditional(sm, :check_restart_allowed(:how_retry)).
+  transition_conditional(sm, :check_restart_allowed, (:restarting, :discontinuation))
+
+  state(sm, :restarting).             # recreate stdio boundary
+  on(sm, :restarting, enter()) ->
+    N_restart++.
+  transition(sm, :restarting, starting, pass).
+
+  final_state(sm, :discontinuation).  # final: tear down listener boundary; sessions terminate below
+  on(sm, :discontinuation, enter()) ->
+    close_boundary(:http_listener).
+    process_handle?.discontinue().
