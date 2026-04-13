@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="system-ui, -apple-system, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="320" fill="#fafafa" rx="8"/>
+
+  <!-- Row 1: Happy path -->
+  <rect x="20" y="30" width="130" height="44" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="1.5"/>
+  <text x="85" y="56" text-anchor="middle" font-weight="bold" fill="#2e7d32">:invocation</text>
+
+  <rect x="185" y="30" width="130" height="44" rx="8" fill="#fff" stroke="#666" stroke-width="1.5"/>
+  <text x="250" y="56" text-anchor="middle" fill="#333">:server_listen</text>
+
+  <rect x="350" y="30" width="130" height="44" rx="8" fill="#fff" stroke="#666" stroke-width="1.5"/>
+  <text x="415" y="56" text-anchor="middle" fill="#333">:starting</text>
+
+  <rect x="515" y="30" width="130" height="44" rx="8" fill="#fff" stroke="#666" stroke-width="1.5"/>
+  <text x="580" y="56" text-anchor="middle" fill="#333">:running</text>
+
+  <!-- Row 1 arrows -->
+  <line x1="150" y1="52" x2="183" y2="52" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="315" y1="52" x2="348" y2="52" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="480" y1="52" x2="513" y2="52" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2: Error + Restart -->
+  <rect x="350" y="140" width="130" height="44" rx="8" fill="#fff" stroke="#666" stroke-width="1.5"/>
+  <text x="415" y="166" text-anchor="middle" fill="#333">:restarting</text>
+
+  <rect x="515" y="140" width="130" height="44" rx="8" fill="#fff" stroke="#666" stroke-width="1.5"/>
+  <text x="580" y="166" text-anchor="middle" fill="#333">:error</text>
+
+  <!-- Row 3: Discontinuation -->
+  <rect x="515" y="250" width="160" height="44" rx="8" fill="#ffebee" stroke="#e53935" stroke-width="1.5"/>
+  <text x="595" y="276" text-anchor="middle" font-weight="bold" fill="#c62828">:discontinuation</text>
+
+  <!-- Running → Error (down) -->
+  <line x1="580" y1="74" x2="580" y2="138" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Error → Restarting (left) -->
+  <line x1="515" y1="162" x2="482" y2="162" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="498" y="155" text-anchor="middle" font-size="10" fill="#666">N &lt; max</text>
+
+  <!-- Restarting → Starting (up) -->
+  <line x1="415" y1="140" x2="415" y2="76" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Error → Discontinuation (down) -->
+  <line x1="580" y1="184" x2="580" y2="248" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="598" y="220" font-size="10" fill="#666">N ≥ max</text>
+
+  <!-- Running → Discontinuation (curved right then down) -->
+  <path d="M645,52 C690,52 695,160 695,272 L677,272" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="700" y="150" font-size="10" fill="#666">TERM</text>
+
+  <!-- Legend -->
+  <rect x="20" y="260" width="10" height="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="1"/>
+  <text x="35" y="270" font-size="10" fill="#666">initial state</text>
+  <rect x="110" y="260" width="10" height="10" fill="#ffebee" stroke="#e53935" stroke-width="1"/>
+  <text x="125" y="270" font-size="10" fill="#666">final state</text>
+</svg>
