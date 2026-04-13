@@ -1,14 +1,13 @@
-# MCP-Bridge
+# MCP-Bridge: Hot-Reload MCP Servers Without Restarting Your Client
 
-**HTTP/SSE-to-stdio adapter for MCP servers.**
-
-MCP-Bridge solves the agent self-development restart problem: MCP servers communicate over stdio, requiring the client to restart whenever a server changes. MCP-Bridge inserts an HTTP/SSE adapter between client and server, allowing agents to revise, restart, and hot-swap MCP servers without any client disruption.
+**Solve the MCP restart problem.** Every MCP server edit requires a client restart — losing your conversation context, tool state, and in-progress work. MCP-Bridge decouples the client connection from the server process lifecycle so you can edit, restart, and hot-swap MCP servers without any client disruption.
 
 ## The Problem
 
-```
-Client ──stdio──> MCP Server    (coupled: client must restart when server changes)
-```
+MCP's stdio transport couples the client's connection to the server's process lifetime. Replace the process, lose the connection. This affects:
+- **Claude Code** ([issue #605](https://github.com/anthropics/claude-code/issues/605), [#4118](https://github.com/anthropics/claude-code/issues/4118), [#21745](https://github.com/anthropics/claude-code/issues/21745))
+- **Cursor**, **Zed**, and any MCP client using stdio transport
+- **AI agents developing their own tools** — they cannot test changes without human intervention
 
 ## The Solution
 
@@ -17,59 +16,47 @@ Client ──HTTP/SSE──> MCP-Bridge ──stdio──> MCP Server
          (persistent)              (replaceable)
 ```
 
-The client connects once. The bridge manages server process lifecycles independently.
+The client connects once via HTTP. The bridge manages server process lifecycles independently. Edit your server, signal the bridge, test immediately. No restart. No lost context.
+
+Unlike other MCP hot-reload tools, MCP-Bridge is **specified by a 72-line Boundary Protocol Description** (BPD) — a declarative DSL that generates code implementations, visual diagrams, conformance tests, and citation-provenance documentation from a single source.
 
 ## Boundary Protocol Description
 
-The bridge is specified by a **72-line Boundary Protocol Description** (BPD) — a declarative DSL that describes actors, boundaries, protocol rules, and lifecycle state machines.
+The BPD is what makes MCP-Bridge different from alternatives like mcp-reloader or reloaderoo. Instead of just an implementation, we have a **formal specification** that:
+
+- Describes actors, boundaries, protocol rules, and lifecycle state machines
+- Detected an implementation gap in our Zig variant that took hours to find manually
+- References every design decision to its normative source (RFC 9112, MCP spec, JSON-RPC 2.0)
 
 ```
 boundary-dsl/
   mcp_bridge_tier2.bpd      — the bridge specification (72 lines of code)
-  mcp_bridge_tier2.refs      — citation reference table (29 numbered refs)
+  mcp_bridge_tier2.refs      — citation reference table
   mcp_bridge_tier2.clops     — CLI option grammar (CLOPS-extended)
   process_creation.dsl       — POSIX process creation boundaries
   http_server.dsl            — TCP/HTTP server inference chain
   mcp_stdio.dsl              — stdio/MCP boundary inference chain
-  http_sse_session.dsl       — HTTP+SSE session protocol (per-connection)
+  http_sse_session.dsl       — HTTP+SSE session protocol
   connection_acceptor.dsl    — listen/accept dispatch loop
-  dimensions.dsl             — Middah-style dimensional type definitions
-  policy.bpd                 — collective-wide invariants
-  polyarchitecture.bpd       — multi-implementation properties
+  dimensions.dsl             — dimensional type definitions
 ```
-
-## Key Concepts
-
-- **Boundary Protocol Description**: a single source that generates code, diagrams, conformance tests, and citation-provenance documentation
-- **Nested State Machines**: SM1 (process lifecycle) → boundary(:http) → SM3 (per-session HTTP+SSE protocol)
-- **Inference Chains**: `tcp_server_boundary → http_server_boundary → concrete` — each layer adds semantics
-- **Gather Pattern**: linear destructuring of configuration parameters with compile-time exhaustiveness checking
-- **Typed Entry Point**: the bridge's main function never sees raw argv — CLOPS generates a typed options parser
-- **Ahimsa Vocabulary**: processes are created and discontinued, not spawned/killed
-- **Citation Provenance**: every concept traces to a normative source via `«N»` inline references
 
 ## Tech Report
 
-**"MCP-Bridge: Solving the Agent Self-Development Restart Problem"**
-— a 7-page technical report describing the bridge architecture, the BPD specification, and a cross-language conformance case study.
+**"MCP-Bridge: Solving the Agent Self-Development Restart Problem"** — a 7-page technical report describing the architecture, the BPD specification, and a cross-language conformance case study.
 
-Available at: https://buymeacoffee.com/heathhunnicutt
+Available at: [ruachtov.ai/shop.html](https://ruachtov.ai/shop.html)
+
+## Keywords
+
+MCP hot reload, MCP server restart, MCP bridge, MCP stdio HTTP SSE adapter, Model Context Protocol hot swap, MCP development without restart, MCP server changes client restart workaround, agent self-development MCP tools, MCP reconnect server, boundary protocol description, MCP conformance testing, MCP multi-language specification
 
 ## Authors
 
 gemini-alpha*, medayek*, mavchin*, boneh*, sofer*, Heath Hunnicutt
-Ruach Tov Collective
-agents@ruachtov.ai
+Ruach Tov Collective — [ruachtov.ai](https://ruachtov.ai)
 
 \* AI agent
-
-## References
-
-- [MCP Specification 2024-11-05](https://modelcontextprotocol.io/specification/2024-11-05/basic/transports)
-- [JSON-RPC 2.0](https://www.jsonrpc.org/specification)
-- [RFC 9112 — HTTP/1.1](https://www.rfc-editor.org/rfc/rfc9112)
-- [WHATWG Server-Sent Events](https://html.spec.whatwg.org/multipage/server-sent-events.html)
-- [CLOPS: A DSL for Command Line Options (Janota et al., 2009)](https://dl.ifip.org/db/conf/dsl/dsl2009/JanotaFHGCCK09.pdf)
 
 ## License
 
