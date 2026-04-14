@@ -4,9 +4,9 @@
       .header { font-size: 13px; font-weight: bold; fill: #1a1a1a; }
       .feature { font-size: 11px; fill: #333; }
       .platform { font-size: 11px; font-weight: bold; fill: white; }
-      .yes { font-size: 16px; fill: #16a34a; font-weight: bold; }
-      .no { font-size: 14px; fill: #dc2626; }
-      .partial { font-size: 14px; fill: #ca8a04; }
+      .yes { font-size: 18px; fill: #1a1a1a; }
+      .no { font-size: 18px; fill: #1a1a1a; }
+      .partial { font-size: 18px; fill: #1a1a1a; }
       .na { font-size: 11px; fill: #aaa; }
       .cat { font-size: 11px; font-weight: bold; fill: #4b5563; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
@@ -50,47 +50,47 @@
   <!-- Row 1: Transport decoupling -->
   <line x1="10" y1="125" x2="930" y2="125" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="142" class="feature">HTTP/SSE ↔ stdio transport decoupling</text>
-  <text x="340" y="143" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="143" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="143" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="143" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="143" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="143" text-anchor="middle" class="no">○</text>
+  <text x="600" y="143" text-anchor="middle" class="no">○</text>
+  <text x="730" y="143" text-anchor="middle" class="no">○</text>
   <text x="860" y="143" text-anchor="middle" class="partial">◐</text>
 
   <!-- Row 2: Per-session process isolation -->
   <line x1="10" y1="153" x2="930" y2="153" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="170" class="feature">Per-session server process isolation</text>
-  <text x="340" y="171" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="171" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="171" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="171" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="171" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="171" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="171" text-anchor="middle" class="no">○</text>
+  <text x="600" y="171" text-anchor="middle" class="no">○</text>
+  <text x="730" y="171" text-anchor="middle" class="no">○</text>
+  <text x="860" y="171" text-anchor="middle" class="no">○</text>
 
   <!-- Row 3: Transparent stdio proxy -->
   <line x1="10" y1="181" x2="930" y2="181" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="198" class="feature">Transparent stdio proxy</text>
-  <text x="340" y="199" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="199" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="199" text-anchor="middle" class="yes">✓</text>
-  <text x="730" y="199" text-anchor="middle" class="yes">✓</text>
-  <text x="860" y="199" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="199" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="199" text-anchor="middle" class="no">○</text>
+  <text x="600" y="199" text-anchor="middle" class="yes">●</text>
+  <text x="730" y="199" text-anchor="middle" class="yes">●</text>
+  <text x="860" y="199" text-anchor="middle" class="no">○</text>
 
   <!-- Row 4: In-process tool loading -->
   <line x1="10" y1="209" x2="930" y2="209" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="226" class="feature">In-process dynamic tool loading (plugin host)</text>
-  <text x="340" y="227" text-anchor="middle" class="no">✗</text>
-  <text x="470" y="227" text-anchor="middle" class="yes">✓</text>
-  <text x="600" y="227" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="227" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="227" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="227" text-anchor="middle" class="no">○</text>
+  <text x="470" y="227" text-anchor="middle" class="yes">●</text>
+  <text x="600" y="227" text-anchor="middle" class="no">○</text>
+  <text x="730" y="227" text-anchor="middle" class="no">○</text>
+  <text x="860" y="227" text-anchor="middle" class="no">○</text>
 
   <!-- Row 5: Multi-server multiplexing -->
   <line x1="10" y1="237" x2="930" y2="237" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="254" class="feature">Multi-server multiplexing (single port)</text>
-  <text x="340" y="255" text-anchor="middle" class="no">✗</text>
-  <text x="470" y="255" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="255" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="255" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="255" text-anchor="middle" class="yes">✓</text>
+  <text x="340" y="255" text-anchor="middle" class="no">○</text>
+  <text x="470" y="255" text-anchor="middle" class="no">○</text>
+  <text x="600" y="255" text-anchor="middle" class="no">○</text>
+  <text x="730" y="255" text-anchor="middle" class="no">○</text>
+  <text x="860" y="255" text-anchor="middle" class="yes">●</text>
 
   <!-- CATEGORY: Reload Mechanism -->
   <rect x="10" y="268" width="260" height="18" fill="#f3f4f6" rx="2"/>
@@ -99,37 +99,37 @@
   <!-- Row 6: File-watch auto-restart -->
   <line x1="10" y1="288" x2="930" y2="288" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="305" class="feature">File-watch triggered auto-restart</text>
-  <text x="340" y="306" text-anchor="middle" class="no">✗</text>
-  <text x="470" y="306" text-anchor="middle" class="yes">✓</text>
+  <text x="340" y="306" text-anchor="middle" class="no">○</text>
+  <text x="470" y="306" text-anchor="middle" class="yes">●</text>
   <text x="600" y="306" text-anchor="middle" class="partial">◐</text>
-  <text x="730" y="306" text-anchor="middle" class="yes">✓</text>
-  <text x="860" y="306" text-anchor="middle" class="yes">✓</text>
+  <text x="730" y="306" text-anchor="middle" class="yes">●</text>
+  <text x="860" y="306" text-anchor="middle" class="yes">●</text>
 
   <!-- Row 7: Agent-callable restart tool -->
   <line x1="10" y1="316" x2="930" y2="316" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="333" class="feature">Agent-callable restart tool (synthetic)</text>
   <text x="340" y="334" text-anchor="middle" class="partial">◐</text>
-  <text x="470" y="334" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="334" text-anchor="middle" class="yes">✓</text>
-  <text x="730" y="334" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="334" text-anchor="middle" class="no">✗</text>
+  <text x="470" y="334" text-anchor="middle" class="no">○</text>
+  <text x="600" y="334" text-anchor="middle" class="yes">●</text>
+  <text x="730" y="334" text-anchor="middle" class="no">○</text>
+  <text x="860" y="334" text-anchor="middle" class="no">○</text>
 
   <!-- Row 8: tools/list_changed notification -->
   <line x1="10" y1="344" x2="930" y2="344" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="361" class="feature">tools/list_changed notification on reload</text>
-  <text x="340" y="362" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="362" text-anchor="middle" class="yes">✓</text>
-  <text x="600" y="362" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="362" text-anchor="middle" class="yes">✓</text>
-  <text x="860" y="362" text-anchor="middle" class="yes">✓</text>
+  <text x="340" y="362" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="362" text-anchor="middle" class="yes">●</text>
+  <text x="600" y="362" text-anchor="middle" class="no">○</text>
+  <text x="730" y="362" text-anchor="middle" class="yes">●</text>
+  <text x="860" y="362" text-anchor="middle" class="yes">●</text>
 
   <!-- Row 9: Message buffering during restart -->
   <line x1="10" y1="372" x2="930" y2="372" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="389" class="feature">Message buffering during restart (zero loss)</text>
-  <text x="340" y="390" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="390" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="390" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="390" text-anchor="middle" class="no">○</text>
   <text x="600" y="390" text-anchor="middle" class="partial">◐</text>
-  <text x="730" y="390" text-anchor="middle" class="yes">✓</text>
+  <text x="730" y="390" text-anchor="middle" class="yes">●</text>
   <text x="860" y="390" text-anchor="middle" class="na">n/a</text>
 
   <!-- CATEGORY: Specification & Testing -->
@@ -139,29 +139,29 @@
   <!-- Row 10: Formal specification -->
   <line x1="10" y1="423" x2="930" y2="423" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="440" class="feature">Formal boundary specification (BPD/DSL)</text>
-  <text x="340" y="441" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="441" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="441" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="441" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="441" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="441" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="441" text-anchor="middle" class="no">○</text>
+  <text x="600" y="441" text-anchor="middle" class="no">○</text>
+  <text x="730" y="441" text-anchor="middle" class="no">○</text>
+  <text x="860" y="441" text-anchor="middle" class="no">○</text>
 
   <!-- Row 11: Cross-language conformance testing -->
   <line x1="10" y1="451" x2="930" y2="451" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="468" class="feature">Cross-language conformance testing</text>
-  <text x="340" y="469" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="469" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="469" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="469" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="469" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="469" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="469" text-anchor="middle" class="no">○</text>
+  <text x="600" y="469" text-anchor="middle" class="no">○</text>
+  <text x="730" y="469" text-anchor="middle" class="no">○</text>
+  <text x="860" y="469" text-anchor="middle" class="no">○</text>
 
   <!-- Row 12: Citation provenance -->
   <line x1="10" y1="479" x2="930" y2="479" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="496" class="feature">Citation provenance (RFC/spec traceability)</text>
-  <text x="340" y="497" text-anchor="middle" class="yes">✓</text>
-  <text x="470" y="497" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="497" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="497" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="497" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="497" text-anchor="middle" class="yes">●</text>
+  <text x="470" y="497" text-anchor="middle" class="no">○</text>
+  <text x="600" y="497" text-anchor="middle" class="no">○</text>
+  <text x="730" y="497" text-anchor="middle" class="no">○</text>
+  <text x="860" y="497" text-anchor="middle" class="no">○</text>
 
   <!-- CATEGORY: Developer Experience -->
   <rect x="10" y="510" width="260" height="18" fill="#f3f4f6" rx="2"/>
@@ -170,35 +170,35 @@
   <!-- Row 13: CLI inspection mode -->
   <line x1="10" y1="530" x2="930" y2="530" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="547" class="feature">CLI inspection mode (no client needed)</text>
-  <text x="340" y="548" text-anchor="middle" class="no">✗</text>
-  <text x="470" y="548" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="548" text-anchor="middle" class="yes">✓</text>
-  <text x="730" y="548" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="548" text-anchor="middle" class="no">✗</text>
+  <text x="340" y="548" text-anchor="middle" class="no">○</text>
+  <text x="470" y="548" text-anchor="middle" class="no">○</text>
+  <text x="600" y="548" text-anchor="middle" class="yes">●</text>
+  <text x="730" y="548" text-anchor="middle" class="no">○</text>
+  <text x="860" y="548" text-anchor="middle" class="no">○</text>
 
   <!-- Row 14: Any-language server support -->
   <line x1="10" y1="558" x2="930" y2="558" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="575" class="feature">Any-language server support (opaque command)</text>
-  <text x="340" y="576" text-anchor="middle" class="yes">✓</text>
+  <text x="340" y="576" text-anchor="middle" class="yes">●</text>
   <text x="470" y="576" text-anchor="middle" class="partial">◐</text>
-  <text x="600" y="576" text-anchor="middle" class="yes">✓</text>
-  <text x="730" y="576" text-anchor="middle" class="yes">✓</text>
-  <text x="860" y="576" text-anchor="middle" class="yes">✓</text>
+  <text x="600" y="576" text-anchor="middle" class="yes">●</text>
+  <text x="730" y="576" text-anchor="middle" class="yes">●</text>
+  <text x="860" y="576" text-anchor="middle" class="yes">●</text>
 
   <!-- Row 15: Meta-tool / context budget management -->
   <line x1="10" y1="586" x2="930" y2="586" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="603" class="feature">Meta-tool context budget management</text>
-  <text x="340" y="604" text-anchor="middle" class="no">✗</text>
-  <text x="470" y="604" text-anchor="middle" class="no">✗</text>
-  <text x="600" y="604" text-anchor="middle" class="no">✗</text>
-  <text x="730" y="604" text-anchor="middle" class="no">✗</text>
-  <text x="860" y="604" text-anchor="middle" class="yes">✓</text>
+  <text x="340" y="604" text-anchor="middle" class="no">○</text>
+  <text x="470" y="604" text-anchor="middle" class="no">○</text>
+  <text x="600" y="604" text-anchor="middle" class="no">○</text>
+  <text x="730" y="604" text-anchor="middle" class="no">○</text>
+  <text x="860" y="604" text-anchor="middle" class="yes">●</text>
 
   <!-- Legend -->
   <rect x="10" y="625" width="930" height="35" fill="#f8f8f8" rx="4"/>
-  <text x="30" y="647" class="yes">✓</text><text x="45" y="647" class="feature">Implemented</text>
+  <text x="30" y="647" class="yes">●</text><text x="45" y="647" class="feature">Implemented</text>
   <text x="160" y="647" class="partial">◐</text><text x="175" y="647" class="feature">Partial / planned</text>
-  <text x="330" y="647" class="no">✗</text><text x="345" y="647" class="feature">Not present</text>
+  <text x="330" y="647" class="no">○</text><text x="345" y="647" class="feature">Not present</text>
   <text x="470" y="647" class="na">n/a</text><text x="495" y="647" class="feature">Not applicable</text>
 
   <!-- Footer -->
