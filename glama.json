@@ -1,0 +1,10 @@
+{
+  "mcp_server": {
+    "name": "MCP-Bridge",
+    "description": "HTTP/SSE-to-stdio bridge that lets agents hot-reload MCP servers without restarting the client. Decouples client connection lifetime from server process lifetime. Specified by a 72-line Boundary Protocol Description.",
+    "repository": "https://github.com/Ruach-Tov/mcp-bridge",
+    "homepage": "https://ruachtov.ai/shop.html",
+    "language": "python",
+    "tags": ["bridge", "hot-reload", "development", "stdio", "http-sse", "boundary-specification"]
+  }
+}
