@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" font-family="system-ui, -apple-system, sans-serif" width="1000" height="720">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 780" font-family="system-ui, -apple-system, sans-serif" width="1000" height="780">
   <defs>
     <style>
       .header { font-size: 13px; font-weight: bold; fill: #1a1a1a; }
@@ -13,7 +13,7 @@
   </defs>
 
   <!-- Background -->
-  <rect width="1000" height="720" fill="#fafafa" rx="6"/>
+  <rect width="1000" height="780" fill="#fafafa" rx="6"/>
 
   <!-- Title -->
   <text x="500" y="30" text-anchor="middle" font-size="16" font-weight="bold" fill="#1a1a1a">MCP Hot-Reload Ecosystem — Feature × Platform Matrix</text>
@@ -130,7 +130,7 @@
   <text x="470" y="390" text-anchor="middle" class="no">○</text>
   <text x="600" y="390" text-anchor="middle" class="partial">◐</text>
   <text x="730" y="390" text-anchor="middle" class="yes">●</text>
-  <text x="860" y="390" text-anchor="middle" class="na">n/a</text>
+  <text x="860" y="390" text-anchor="middle" font-size="11" fill="#666" font-style="italic">ᵃ</text>
 
   <!-- CATEGORY: Specification & Testing -->
   <rect x="10" y="403" width="260" height="18" fill="#f3f4f6" rx="2"/>
@@ -180,7 +180,7 @@
   <line x1="10" y1="558" x2="930" y2="558" stroke="#f0f0f0" stroke-width="0.5"/>
   <text x="15" y="575" class="feature">Any-language server support (opaque command)</text>
   <text x="340" y="576" text-anchor="middle" class="yes">●</text>
-  <text x="470" y="576" text-anchor="middle" class="partial">◐</text>
+  <text x="465" y="576" text-anchor="middle" class="partial">◐</text><text x="485" y="572" font-size="9" fill="#666" font-style="italic">ᵇ</text>
   <text x="600" y="576" text-anchor="middle" class="yes">●</text>
   <text x="730" y="576" text-anchor="middle" class="yes">●</text>
   <text x="860" y="576" text-anchor="middle" class="yes">●</text>
@@ -195,13 +195,18 @@
   <text x="860" y="604" text-anchor="middle" class="yes">●</text>
 
   <!-- Legend -->
-  <rect x="10" y="625" width="930" height="35" fill="#f8f8f8" rx="4"/>
-  <text x="30" y="647" class="yes">●</text><text x="45" y="647" class="feature">Implemented</text>
-  <text x="160" y="647" class="partial">◐</text><text x="175" y="647" class="feature">Partial / planned</text>
-  <text x="330" y="647" class="no">○</text><text x="345" y="647" class="feature">Not present</text>
-  <text x="470" y="647" class="na">n/a</text><text x="495" y="647" class="feature">Not applicable</text>
+  <rect x="10" y="625" width="930" height="28" fill="#f8f8f8" rx="4"/>
+  <text x="30" y="644" class="yes">●</text><text x="45" y="644" class="feature">Implemented</text>
+  <text x="200" y="644" class="partial">◐</text><text x="215" y="644" class="feature">Partial / planned</text>
+  <text x="400" y="644" class="no">○</text><text x="415" y="644" class="feature">Not present</text>
+
+  <!-- Footnotes -->
+  <text x="15" y="680" font-size="10" fill="#666" font-style="italic">ᵃ Message buffering does not apply to mcp-gateway. It translates MCP calls to outbound HTTP/REST requests rather than</text>
+  <text x="20" y="693" font-size="10" fill="#666" font-style="italic">managing a restartable child process. There is no restart window during which messages would need to be held.</text>
+  <text x="15" y="712" font-size="10" fill="#666" font-style="italic">ᵇ mcp-reloader supports wrapping an arbitrary command in process-wrap mode, but its primary mode loads JavaScript</text>
+  <text x="20" y="725" font-size="10" fill="#666" font-style="italic">modules directly. Non-JS servers require the secondary mode.</text>
 
   <!-- Footer -->
-  <text x="500" y="685" text-anchor="middle" font-size="10" fill="#999">Source: BPD comparative analysis by Ruach Tov Collective, April 2026</text>
-  <text x="500" y="700" text-anchor="middle" font-size="10" fill="#999">github.com/Ruach-Tov/mcp-bridge · ruachtov.ai</text>
+  <text x="500" y="750" text-anchor="middle" font-size="10" fill="#999">Source: BPD comparative analysis by Ruach Tov Collective, April 2026</text>
+  <text x="500" y="763" text-anchor="middle" font-size="10" fill="#999">github.com/Ruach-Tov/mcp-bridge · ruachtov.ai</text>
 </svg>
