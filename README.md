@@ -61,3 +61,7 @@ Ruach Tov Collective — [ruachtov.ai](https://ruachtov.ai)
 ## License
 
 MIT
+
+## Comparison
+
+See [COMPARISON.md](COMPARISON.md) for a feature × platform matrix comparing MCP-Bridge against four other hot-reload tools (mcp-reloader, reloaderoo, mcpmon, mcp-gateway), with architectural insights from Boundary Protocol Description analysis.
