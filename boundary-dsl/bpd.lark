@@ -1,0 +1,292 @@
+// BPD Tier II Grammar — Lark EBNF
+// Formal grammar for Boundary Protocol Description files (.bpd, .dsl)
+//
+// Design decisions (adjudicated by mavchin, 2026-04-16):
+//   - ";" is sequencing within a block, "." terminates a clause
+//   - "|" at clause level = parallel composition; "| :atom ->" = pattern match
+//   - ":-" = implication (head derives from body); "->" = action/production
+//   - Indentation is not significant for parsing (terminators are "." and ";")
+//   - CLOPS (.clops) and refs (.refs) are separate sub-languages, not parsed here
+//   - Citation markers #«N» are lexed as structured comments, not discarded
+//
+// Author: mavchin (Claude Opus 4.6) with construct inventory by metayen (Claude Opus 4.7)
+// Reference: must_close/boundary_dsl/BPD_CONSTRUCT_INVENTORY.md
+
+// ── Top Level ──────────────────────────────────────────────────
+
+start: (directive | clause)*
+
+// ── Directives ─────────────────────────────────────────────────
+
+directive: "!include" include_label? FILEPATH
+include_label: "(" NAME ")"
+
+// ── Clauses ────────────────────────────────────────────────────
+// A clause is either:
+//   1. A fact (no body):              process(:client).
+//   2. A horn rule (head :- body):    actor(X) :- process(X).
+//   3. An action rule (head -> body): gather_listen_endpoint(...) -> body.
+//   4. A combined rule (head :- specific_head -> body)
+
+// Clause terminator: "." or ";". Required.
+// If existing BPD files have missing terminators, fix the BPD file.
+//
+// Annotations are Python-decorator-style metadata attached to a clause.
+// They live on their own lines above the clause, stripped by the
+// preprocessor and emitted as separate provenance facts in the
+// generated IR. Multiple annotations stack; each is an "@" followed by
+// a named functor with arguments.
+//
+//   @cites(rfc9112, section("2.1"))
+//   @adopts(python_sdk_v1x)
+//   absorb(:content_length_framing).
+//
+// The grammar admits annotations; the preprocessor gives them meaning.
+// A vanilla-Prolog consumer runs the preprocessor first to strip them.
+clause: annotation* head clause_body? "."
+      | annotation* head clause_body? ";"
+
+annotation: "@" NAME "(" arg_list? ")"
+
+// After IMPLIES, the clause can be either:
+//   (a) a specific head followed by ARROW and a body
+//       ("boundary(...) :- specific(...) -> body"), OR
+//   (b) directly a body.
+// These overlap structurally (variant (b) can contain an inner_clause
+// with head->body shape). We use rule priority (.2 prefix) to prefer
+// variant (a) — when the specific-head form is valid, it wins. This
+// matches the semantic intent: ":- head -> body" means "derive head
+// from specific-head via action body", not "derive head from a body
+// that happens to contain a head->body inner_clause."
+clause_body.2: IMPLIES head ARROW body
+             | ARROW body
+             | IMPLIES body
+
+IMPLIES: ":-"
+ARROW: "->"
+
+// ── Head ───────────────────────────────────────────────────────
+// A head is a compound term, atom, or variable.
+// The "double parameter tuple" form (http_listener_boundary(:a,:b,:c)(:port,:host))
+// is a compound_term_double, handled inside compound_term.
+// bare_name cannot appear here — it stays as a value-level term only.
+
+head: compound_term
+    | atom
+    | VARIABLE
+
+// ── Body ───────────────────────────────────────────────────────
+// A body is a sequence of body elements separated by "," or ";"
+// or a parallel composition separated by "|"
+// or a pattern match block
+
+body: body_element (body_sep body_element)*
+    | parallel_body
+    | pattern_match_body
+
+body_sep: "," | ";"
+
+// Nested annotations: body_element may be preceded by annotation*.
+// When present, annotations attach to the body_element as provenance
+// metadata the same way they attach to top-level clauses. The preprocessor
+// discovers them during body traversal and emits provenance facts with
+// a nested clause ID: <parent_clause_id>__<inner_functor>_<N>.
+// This closes the gap mavchin identified during the mcp_bridge_tier2.bpd
+// annotation sprint: inner clauses (states, transitions, on-handlers in a
+// state machine) could not carry machine-queryable provenance without this.
+body_element: annotation* (assignment
+                        | increment
+                        | term
+                        | inner_clause
+                        | pattern_match_body)
+
+// Inner clause: a nested head -> body within a larger body.
+// Terminator is optional because when an inner_clause is the last
+// body element of its enclosing outer clause, the outer clause's "."
+// serves as the terminator for both. When the inner_clause is followed
+// by more outer body elements, the BPD corpus uses "." to terminate
+// the inner_clause body. Greediness ambiguities that arise from
+// this shape are resolved by Lark's default resolver picking the
+// leftmost/longest match, which matches human reading convention.
+inner_clause: head ARROW body "."?
+
+// ── Parallel Composition ───────────────────────────────────────
+// Top-level "|" between terms = parallel execution
+
+parallel_body: body_element ("|" body_element)+
+
+// ── Pattern Match ──────────────────────────────────────────────
+// Indented "| :atom -> action" blocks
+
+pattern_match_body: pattern_arm (pattern_arm)*
+
+pattern_arm: "|" atom ARROW body_element
+
+// ── Assignment and Mutation ────────────────────────────────────
+
+assignment: atom ASSIGN term
+ASSIGN: ":="
+
+increment: VARIABLE "++"
+
+// ── Terms ──────────────────────────────────────────────────────
+// The core expression type. A term is:
+//   - An atom (:foo)
+//   - A variable (Foo)
+//   - A literal (42, "string")
+//   - A compound term: name(args)
+//   - A field access: :thing.field or :thing.(field1, field2)
+//   - An infix expression: a == b, a or b, not a
+
+// Term priority: compound_term and field_access must be tried before bare_name
+// because they all start with NAME but compound_term has trailing "(" and
+// field_access has trailing "."
+term: atom
+    | VARIABLE
+    | literal
+    | compound_term
+    | field_access
+    | destructure
+    | infix_expr
+    | not_expr
+    | list_term
+    | safe_nav_call
+    | range_expr
+    | increment
+    | bare_name
+    | tuple_term
+    | "(" term ")"
+
+// Tuple: (a, b, c) — parenthesized comma-separated list of 2+ terms
+tuple_term: "(" term "," term ("," term)* ")"
+
+// Bare lowercase name used as a term (type names, keywords-as-values)
+// Can optionally have [] suffix for array types: fd[], argv[]
+bare_name: NAME "[]"?
+
+// Compound terms have a name (or atom-as-functor) followed by an arg list.
+// The "double-params" case — e.g. http_listener_boundary(:a,:b,:c)(:port,:host)
+// or create_server_process(S)(string command) — is handled by a separate
+// rule (compound_term_double) to keep single-tuple and double-tuple forms
+// disjoint. This eliminates the inherent optional-matching ambiguity.
+// Also handles atom-as-functor: :running(:how_relay), :server_listen(:endpoint)
+compound_term: compound_term_double
+             | compound_term_single
+
+compound_term_single: NAME "(" arg_list? ")"
+                    | atom "(" arg_list? ")"
+
+compound_term_double: NAME "(" arg_list? ")" "(" arg_list? ")"
+                    | atom "(" arg_list? ")" "(" arg_list? ")"
+
+arg_list: arg ("," arg)*
+arg: typed_param | term
+
+// Typed parameter: "string command", "process P"
+typed_param: bare_name bare_name
+           | bare_name VARIABLE
+
+// ── Field Access and Method Call ────────────────────────────────
+// :service.port              — single field
+// :service.(port, host)      — tuple destructure
+// :how_retry.max_restarts    — nested field
+// :switches.parse(:os)       — method call on a field
+
+field_access: (atom | VARIABLE) "." NAME "(" arg_list? ")"
+            | (atom | VARIABLE) "." NAME
+            | (atom | VARIABLE) "." "(" name_list ")"
+
+name_list: NAME ("," NAME)*
+
+// ── Destructuring ──────────────────────────────────────────────
+// :endpoint.(port, host) <- :service.(port, host)
+// :argv[] <- :switches.parse(:os)
+// :relay.stderr_mode <- :service.stderr_mode
+
+destructure: (field_access | atom) DESTRUCTURE term
+DESTRUCTURE: "<-"
+
+// ── Infix Expressions ──────────────────────────────────────────
+
+infix_expr: term INFIX_OP term
+INFIX_OP: "==" | "or" | "and"
+
+not_expr: "not" term
+
+// ── List Terms ─────────────────────────────────────────────────
+
+list_term: "[" arg_list? "]"
+
+// ── Safe Navigation Call ───────────────────────────────────────
+// process_handle?.discontinue()
+
+safe_nav_call: (atom | VARIABLE | NAME) "?." NAME "(" arg_list? ")"
+
+// ── Atoms ──────────────────────────────────────────────────────
+// Atoms start with ":" — :client, :bridge, :0, :_, :GET, :POST
+
+atom: ATOM
+    | ATOM_ZERO
+    | ATOM_ANON
+
+// Atoms: :client, :argv[], :argv:port (colon-chained path)
+// Also matches :Path, :Body, :Method etc. — in BPD, colon-prefixed
+// identifiers are ALL atoms regardless of case. The Prolog convention
+// (uppercase = variable) applies to UNPREFIXED identifiers only.
+// ATOM_ANON (":_") and ATOM_ZERO (":0") are special forms. Terminal
+// priority alone is not enough under Earley with ambiguity="explicit"
+// — both ATOM and ATOM_ANON/ZERO still produce alternative parses.
+// We therefore exclude the specific shapes ":_$" and ":0$" from ATOM via
+// negative lookahead, so each shape has exactly one matching terminal.
+ATOM_ANON: ":_"
+ATOM_ZERO: ":0"
+ATOM: /:(?!_\b)(?!0\b)[a-zA-Z_][a-zA-Z0-9_]*(:[a-z_][a-zA-Z0-9_]*)*(\[\])?/
+
+// ── Variables ──────────────────────────────────────────────────
+// Variables start with uppercase: X, S, NAME, PROCESS, MCP_Service
+
+VARIABLE: /[A-Z][a-zA-Z0-9_]*/
+
+// ── Identifiers (predicate/functor names) ──────────────────────
+
+NAME: /[a-z_][a-zA-Z0-9_]*/
+
+// ── Literals ───────────────────────────────────────────────────
+
+literal: INT | string_concat
+
+// String concatenation: adjacent strings are implicitly concatenated
+// (C-style): "hello " "world" = "hello world"
+string_concat: STRING+
+
+INT: /\-?[0-9]+/
+// Strings can span multiple lines (provenance reasoning often does)
+// Uses DOTALL-equivalent via [\s\S] since Lark may not support /s flag
+STRING: /\"[^\"]*\"/
+
+// ── Range Expression ───────────────────────────────────────────
+// cardinal(0..:max_restarts)
+// The ".." operator creates a range between two bounds
+
+range_expr: term RANGE_OP term
+RANGE_OP: ".."
+
+// ── File Paths (for !include) ──────────────────────────────────
+
+FILEPATH: /[a-zA-Z0-9_.\-\/]+/
+
+// ── Comments and Citations ─────────────────────────────────────
+// Comments start with # and run to end of line.
+// Citation markers #«N» are a special comment form (preserved as metadata).
+// Both are ignored by the grammar — citation extraction is a separate pass.
+
+COMMENT: /\#[^\n]*/
+
+// ── Whitespace ─────────────────────────────────────────────────
+
+%import common.NEWLINE -> _NL
+%import common.WS_INLINE
+
+%ignore WS_INLINE
+%ignore COMMENT
+%ignore _NL

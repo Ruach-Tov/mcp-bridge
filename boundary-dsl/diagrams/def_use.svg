@@ -1,0 +1,245 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540"
+     viewBox="0 0 1000 540"
+     style="background: #0d1117; font-family: 'Roboto', 'Segoe UI', sans-serif;">
+
+  <defs>
+    <marker id="df-arrow" markerWidth="8" markerHeight="6"
+            refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8b949e" />
+    </marker>
+  </defs>
+
+  <text x="500.0" y="25" text-anchor="middle"
+        fill="#f0f6fc" font-size="14" font-weight="bold">
+    Data Flow: Configuration → State Machine</text>
+
+  <text x="940.0" y="50" text-anchor="middle"
+        fill="#484f58" font-size="11" font-weight="bold">
+    Boundaries</text>
+  <text x="60.0" y="50" text-anchor="middle"
+        fill="#484f58" font-size="11" font-weight="bold">
+    Sources</text>
+  <text x="280.0" y="50" text-anchor="middle"
+        fill="#484f58" font-size="11" font-weight="bold">
+    Transforms</text>
+  <text x="500.0" y="50" text-anchor="middle"
+        fill="#484f58" font-size="11" font-weight="bold">
+    Parameters</text>
+  <text x="720.0" y="50" text-anchor="middle"
+        fill="#484f58" font-size="11" font-weight="bold">
+    Variables</text>
+
+  <!-- Edges -->
+  <path d="M 120.0,100 C 170.0,100 170.0,100 220.0,100" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="53"
+        data-element-type="edge" />
+  <path d="M 340.0,100 C 390.0,100 390.0,100 440.0,100" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="53"
+        data-element-type="edge" />
+  <path d="M 120.0,100 C 170.0,100 170.0,180 220.0,180" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="56"
+        data-element-type="edge" />
+  <path d="M 340.0,180 C 390.0,180 390.0,180 440.0,180" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="56"
+        data-element-type="edge" />
+  <path d="M 120.0,100 C 170.0,100 170.0,260 220.0,260" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="59"
+        data-element-type="edge" />
+  <path d="M 340.0,260 C 390.0,260 390.0,260 440.0,260" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="59"
+        data-element-type="edge" />
+  <path d="M 120.0,100 C 170.0,100 170.0,340 220.0,340" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="62"
+        data-element-type="edge" />
+  <path d="M 340.0,340 C 390.0,340 390.0,340 440.0,340" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="62"
+        data-element-type="edge" />
+  <path d="M 120.0,100 C 170.0,100 170.0,260 220.0,260" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="68"
+        data-element-type="edge" />
+  <path d="M 340.0,260 C 390.0,260 390.0,260 440.0,260" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="68"
+        data-element-type="edge" />
+  <path d="M 120.0,100 C 170.0,100 170.0,340 220.0,340" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="70"
+        data-element-type="edge" />
+  <path d="M 340.0,340 C 390.0,340 390.0,340 440.0,340" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="70"
+        data-element-type="edge" />
+  <path d="M 560.0,100 C 500.0,100 500.0,420 440.0,420" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="74"
+        data-element-type="edge" />
+  <path d="M 560.0,180 C 500.0,180 500.0,420 440.0,420" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="74"
+        data-element-type="edge" />
+  <path d="M 560.0,260 C 500.0,260 500.0,420 440.0,420" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="74"
+        data-element-type="edge" />
+  <path d="M 560.0,340 C 500.0,340 500.0,420 440.0,420" fill="none" stroke="#484f58" stroke-width="1.2"
+        marker-end="url(#df-arrow)" data-bpd-line="74"
+        data-element-type="edge" />
+
+  <!-- Nodes -->
+  <g data-element-type="node" data-node-name="http_listener"
+     data-node-type="boundary">
+    <rect x="885.0" y="80.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#f85149" stroke-width="1.5" />
+    <text x="940.0" y="92.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">http_listener</text>
+    <text x="940.0" y="104.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">(client ↔ bridge)</text>
+  </g>
+  <g data-element-type="node" data-node-name="http_session"
+     data-node-type="boundary">
+    <rect x="885.0" y="160.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#f85149" stroke-width="1.5" />
+    <text x="940.0" y="172.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">http_session</text>
+    <text x="940.0" y="184.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">(client ↔ bridge)</text>
+  </g>
+  <g data-element-type="node" data-node-name="mcp_server_connection"
+     data-node-type="boundary">
+    <rect x="885.0" y="240.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#f85149" stroke-width="1.5" />
+    <text x="940.0" y="252.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">mcp_server_connection</text>
+    <text x="940.0" y="264.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">(bridge ↔ server)</text>
+  </g>
+  <g data-element-type="node" data-node-name="service_args"
+     data-node-type="source">
+    <rect x="5.0" y="80.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#58a6ff" stroke-width="1.5" />
+    <text x="60.0" y="98.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">service_args</text>
+  </g>
+  <g data-element-type="node" data-node-name="gather_listen_endpoint"
+     data-node-type="transform">
+    <rect x="225.0" y="80.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#d2a8ff" stroke-width="1.5" />
+    <text x="280.0" y="98.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">listen_endpoint</text>
+  </g>
+  <g data-element-type="node" data-node-name="endpoint"
+     data-node-type="sink">
+    <rect x="445.0" y="80.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#7ee787" stroke-width="1.5" />
+    <text x="500.0" y="98.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">endpoint</text>
+  </g>
+  <g data-element-type="node" data-node-name="gather_atlaunch_args"
+     data-node-type="transform">
+    <rect x="225.0" y="160.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#d2a8ff" stroke-width="1.5" />
+    <text x="280.0" y="178.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">atlaunch_args</text>
+  </g>
+  <g data-element-type="node" data-node-name="atlaunch"
+     data-node-type="sink">
+    <rect x="445.0" y="160.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#7ee787" stroke-width="1.5" />
+    <text x="500.0" y="178.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">atlaunch</text>
+  </g>
+  <g data-element-type="node" data-node-name="gather_relay_args"
+     data-node-type="transform">
+    <rect x="225.0" y="240.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#d2a8ff" stroke-width="1.5" />
+    <text x="280.0" y="258.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">relay_args</text>
+  </g>
+  <g data-element-type="node" data-node-name="how_relay"
+     data-node-type="sink">
+    <rect x="445.0" y="240.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#7ee787" stroke-width="1.5" />
+    <text x="500.0" y="258.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">how_relay</text>
+  </g>
+  <g data-element-type="node" data-node-name="gather_retry_args"
+     data-node-type="transform">
+    <rect x="225.0" y="320.0"
+          width="110" height="40" rx="10"
+          fill="#1a2332" stroke="#d2a8ff" stroke-width="1.5" />
+    <text x="280.0" y="338.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">retry_args</text>
+  </g>
+  <g data-element-type="node" data-node-name="how_retry"
+     data-node-type="sink">
+    <rect x="445.0" y="320.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#7ee787" stroke-width="1.5" />
+    <text x="500.0" y="338.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">how_retry</text>
+  </g>
+  <g data-element-type="node" data-node-name="sm"
+     data-node-type="sink">
+    <rect x="445.0" y="400.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#7ee787" stroke-width="1.5" />
+    <text x="500.0" y="418.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">state machine (sm)</text>
+  </g>
+  <g data-element-type="node" data-node-name="const_max_restarts"
+     data-node-type="variable">
+    <rect x="665.0" y="80.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#ffa657" stroke-width="1.5" />
+    <text x="720.0" y="92.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">max_restarts</text>
+    <text x="720.0" y="104.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">= cardinal(field(how_retry, max_restarts))</text>
+  </g>
+  <g data-element-type="node" data-node-name="var_N_restart"
+     data-node-type="variable">
+    <rect x="665.0" y="160.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#ffa657" stroke-width="1.5" />
+    <text x="720.0" y="166.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">N_restart</text>
+    <text x="720.0" y="178.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">(cardinal(range(0, max_restarts)))</text>
+    <text x="720.0" y="190.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">init: 0</text>
+  </g>
+  <g data-element-type="node" data-node-name="var_process_handle"
+     data-node-type="variable">
+    <rect x="665.0" y="240.0"
+          width="110" height="40"
+          fill="#1a2332" stroke="#ffa657" stroke-width="1.5" />
+    <text x="720.0" y="246.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">process_handle</text>
+    <text x="720.0" y="258.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">(process)</text>
+    <text x="720.0" y="270.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="10">init: nil</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="60" y="504" width="12" height="12"
+        fill="#1a2332" stroke="#58a6ff" stroke-width="1" />
+  <text x="78" y="514" fill="#8b949e" font-size="10">Source (input)</text>
+  <rect x="240" y="504" width="12" height="12"
+        fill="#1a2332" stroke="#d2a8ff" stroke-width="1" />
+  <text x="258" y="514" fill="#8b949e" font-size="10">Transform</text>
+  <rect x="420" y="504" width="12" height="12"
+        fill="#1a2332" stroke="#7ee787" stroke-width="1" />
+  <text x="438" y="514" fill="#8b949e" font-size="10">Parameter group</text>
+  <rect x="600" y="504" width="12" height="12"
+        fill="#1a2332" stroke="#ffa657" stroke-width="1" />
+  <text x="618" y="514" fill="#8b949e" font-size="10">Variable/Constant</text>
+  <rect x="780" y="504" width="12" height="12"
+        fill="#1a2332" stroke="#f85149" stroke-width="1" />
+  <text x="798" y="514" fill="#8b949e" font-size="10">Boundary</text>
+
+</svg>

@@ -37,13 +37,20 @@
 
 # ── ACTORS ────────────────────────────────────────────────────────────────
 
+@provenance(conversation_45, reasoning("actor/process distinction originates in BPD Tier II design"))
 actor(X) :- process(X).
+@provenance(commit("bfd1fce37"), reasoning("Renamed :agent to :client. Actor derived from process."))
 process(X) :- this_is(X).
 
+@cites(mcp_2024_11_05, reasoning("MCP client is external process requesting tool execution"))
 process(:client).
+@provenance(commit("d00f5d171"), reasoning("Bridge is the subject of this BPD"))
 this_is(:bridge).
+@cites(mcp_2024_11_05, reasoning("MCP server is downstream process providing tools"))
 process(:server).
+@cites(posix, reasoning("OS provides process creation, signals, and file descriptors"))
 process(:os).                          # the operating system — source of CLI boundary
+@cites(posix, reasoning("Shell mediates between bridge and server via execve"))
 process(:shell).                       # /bin/sh — mediates between bridge and server creation
 
 # ── BOUNDARIES ────────────────────────────────────────────────────────────
@@ -55,19 +62,26 @@ process(:shell).                       # /bin/sh — mediates between bridge and
 # Generic POSIX process creation boundaries and bridge-specific
 # instantiation are in process_creation.dsl.
 
+@cites(posix, reasoning("Server process created via fork+execve with command string"))
 posix_create_process(:server_creation, :bridge, S)(command) :-
   create_server_process(S)(string command).
 
 # TCP/HTTP boundary inference chain is in http_server.dsl.
 # MCP bridge: concrete listener and per-session HTTP boundary instantiation.
+@cites(mcp_2024_11_05, reasoning("MCP HTTP+SSE transport binds to host:port"))
+@adopts(python_sdk_v1x, reasoning("SDK convention for listener endpoint"))
 http_listener_boundary(:http_listener, :client, :bridge)(
   :argv:port, :argv:host).
 
+@adopts(python_sdk_v1x, reasoning("Acceptor pattern from SDK SSE transport implementation"))
 acceptor(:http_acceptor, :bridge)(
   bound_to(:http_listener), on_accept(:http_sse_session)).
 
+@cites(mcp_2024_11_05, reasoning("Each SSE connection is a distinct session"))
+@adopts(python_sdk_v1x, reasoning("SDK creates per-connection session with uuid4 session_id"))
 http_session_boundary(:http_session, :client, :bridge)(
   :http_sse_session).
+@cites(rfc4122, reasoning("Session ID is uuid4 per RFC 4122"))
 lifetime(:http_session, created_at(:session_start), destroyed_at(:session_end)).
 derives_from(:http_session, accepted_by(:http_acceptor)).
 
@@ -77,6 +91,7 @@ on(:http_listener, :signal, :listener_failed) ->
 # stdio/MCP boundary inference chain is in mcp_stdio.dsl.
 # MCP bridge: concrete stdio boundary instantiation.
 
+@cites(mcp_2024_11_05, reasoning("MCP stdio transport uses newline-delimited JSON-RPC over stdin/stdout"))
 mcp_stdio_boundary(:mcp_server_connection, :bridge, :server) ->
   lifetime(:mcp_server_connection, created_at(:session_start), destroyed_at(:session_end)).
   derives_from(:server_creation, channel(:fds)).
@@ -91,6 +106,9 @@ mcp_stdio_boundary(:mcp_server_connection, :bridge, :server) ->
 # its own HTTP session boundary, its own stdio boundary, and its own
 # MCP server process. The relay connects that session's HTTP stream to
 # that session's stdio pipe.
+@id(bridge_relay)
+@cites(mcp_2024_11_05, reasoning("Bridge relays JSON-RPC between HTTP+SSE and stdio transports"))
+@provenance(commit("d1191be85"), reasoning("Pattern-match syntax for stderr relay disposition"))
 relay(:bridge, :http_session, :mcp_server_connection) ->
   relay(:http_session.recv, :mcp_server_connection.send) |
   relay(:http_session.send, :mcp_server_connection.recv) |
@@ -112,20 +130,26 @@ relay(:bridge, :http_session, :mcp_server_connection) ->
 # while a session's MCP server process is alive, and is recreated per
 # accepted session rather than being bridge-global.
 
+@adopts(python_sdk_v1x, reasoning("SDK binds host:port from CLI arguments"))
 gather_listen_endpoint(:endpoint, :service_args) ->
   :endpoint.(port, host) <- :service.(port, host).
 
+@adopts(python_sdk_v1x, reasoning("SDK passes command and cwd to subprocess creation"))
 gather_atlaunch_args(:atlaunch, :service_args) ->
   :atlaunch.(command, cwd) <- :service.(command, cwd).
 
+@provenance(commit("d1191be85"), reasoning("stderr disposition is a bridge-specific design choice"))
 gather_relay_args(:how_relay, :service_args) ->
   :relay.stderr_mode <- :service.stderr_mode.
 
+@provenance(commit("ca73fd8c2"), reasoning("retry parameters from Heath's state machine restructuring"))
 gather_retry_args(:how_retry, :service_args) ->
   :retry.max_retries <- :service.max_retries.
 
+@provenance(commit("ca73fd8c2"), reasoning("Heath restructured state machine with named states and explicit transitions"))
 service_launcher_state_machine(sm, :service_args) ->
   # ── Invocation: absorb the CLI boundary ──
+  @cites(posix, reasoning("CLI arguments absorbed from argv via getopt-style parsing"))
   initial_state(sm, :invocation) ->     # initial: absorb CLI boundary
     gather_listen_endpoint(:endpoint, :service_args);
     gather_atlaunch_args(:atlaunch, :service_args);
@@ -136,32 +160,44 @@ service_launcher_state_machine(sm, :service_args) ->
     constant(sm, :max_restarts, cardinal(:how_retry.max_restarts)).
     variable(sm, :N_restart, cardinal(0..:max_restarts), 0).
     variable(sm, :process_handle, process, :nil).
+
+  initial_state(sm, :invocation).
   transition(sm, :invocation, :server_listen, configuration_absorbed).
 
+  @cites(mcp_2024_11_05, reasoning("Server must listen for HTTP+SSE connections before accepting clients"))
   state(sm, :server_listen(:endpoint)).
+  @adopts(python_sdk_v1x, reasoning("SDK opens HTTP listener on enter"))
   on(sm, :server_listen, enter()) ->
     open_boundary(:http_listener).
   transition(sm, :server_listen, :starting, boundary_open(:http_listener)).
 
+  @cites(posix, reasoning("Process creation via fork+execve with command from :atlaunch"))
   state(sm, :starting(:atlaunch)).    # create process, establish stdio + HTTP
-  transition(sm, :starting, :running, exists(:process_handle))
+  transition(sm, :starting, :running, exists(:process_handle)).
 
+  @cites(mcp_2024_11_05, reasoning("Running state: bridge relays JSON-RPC between transports"))
   state(sm, :running(:how_relay)).    # relay between HTTP and stdio
+  @cites(posix, reasoning("SIGTERM causes graceful discontinuation"))
   transition( sm, :running, :discontinuation, signal(TERM) or ( boundary_status(:http_listener) == boundary_closed )).
+  @provenance(commit("173411b8c"), reasoning("Error on process handle loss, detected via boundary collapse"))
   transition( sm, :running, :error, not exists(:process_handle)).
 
+  @provenance(commit("173411b8c"), reasoning("Error state entered when stdio boundary collapses unexpectedly"))
   state(sm, :error).                  # stdio boundary collapsed
   transition(sm, :error, :check_restart_allowed, pass).
 
+  @provenance(commit("ca73fd8c2"), reasoning("Conditional diamond checks restart budget"))
   conditional(sm, :check_restart_allowed(:how_retry)).
-  transition_conditional(sm, :check_restart_allowed, (:restarting, :discontinuation))
+  transition_conditional(sm, :check_restart_allowed, (:restarting, :discontinuation)).
 
+  @provenance(commit("ca73fd8c2"), reasoning("Restarting increments counter and re-enters :starting"))
   state(sm, :restarting).             # recreate stdio boundary
   on(sm, :restarting, enter()) ->
     N_restart++.
-  transition(sm, :restarting, starting, pass).
+  transition(sm, :restarting, :starting, pass).
 
+  @provenance(commit("ca73fd8c2"), reasoning("Discontinuation tears down listener and signals server"))
   final_state(sm, :discontinuation).  # final: tear down listener boundary; sessions terminate below
   on(sm, :discontinuation, enter()) ->
-    close_boundary(:http_listener).
+    close_boundary(:http_listener),
     process_handle?.discontinue().

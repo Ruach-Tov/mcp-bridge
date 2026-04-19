@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>BPD State Machine — Click-Through Navigator</title>
+<style>
+  body { margin: 0; background: #0d1117; color: #f0f6fc; font-family: 'Roboto', sans-serif; }
+  #container { display: flex; height: 100vh; }
+  #svg-panel { flex: 2; overflow: auto; padding: 20px; }
+  #info-panel { flex: 1; background: #161b22; padding: 20px; overflow-y: auto; border-left: 1px solid #30363d; }
+  #info-panel h2 { color: #58a6ff; margin-top: 0; }
+  #info-panel .label { color: #8b949e; font-size: 12px; text-transform: uppercase; margin-top: 16px; }
+  #info-panel .value { color: #f0f6fc; font-size: 14px; margin-top: 4px; }
+  #info-panel .source { color: #7ee787; font-weight: bold; }
+  #info-panel .reasoning { color: #d2a8ff; font-style: italic; }
+  #info-panel .bpd-line { color: #ffa657; cursor: pointer; text-decoration: underline; }
+  #info-panel .refs-entry { color: #8b949e; font-size: 12px; margin-top: 4px; padding: 8px; background: #0d1117; border-radius: 4px; }
+  #info-panel #placeholder { color: #484f58; font-style: italic; }
+  svg g[data-element-type="state"] { cursor: pointer; }
+  svg g[data-element-type="state"]:hover ellipse,
+  svg g[data-element-type="state"]:hover polygon { stroke-width: 3; filter: brightness(1.3); }
+  svg path[data-element-type="transition"] { cursor: pointer; }
+  svg path[data-element-type="transition"]:hover { stroke: #58a6ff !important; stroke-width: 2.5; }
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="svg-panel">
+    <!-- SVG will be loaded here -->
+  </div>
+  <div id="info-panel">
+    <h2>BPD Navigator</h2>
+    <div id="placeholder">Click a state or transition to see its provenance.</div>
+    <div id="info-content" style="display:none">
+      <div class="label">Element</div>
+      <div class="value" id="el-name"></div>
+      
+      <div class="label">Type</div>
+      <div class="value" id="el-type"></div>
+      
+      <div class="label">BPD Source</div>
+      <div class="value"><span class="bpd-line" id="el-bpd-line" onclick="openInEditor()"></span></div>
+      
+      <div class="label">Provenance Source</div>
+      <div class="value source" id="el-prov-source"></div>
+      
+      <div class="label">Reasoning</div>
+      <div class="value reasoning" id="el-prov-reasoning"></div>
+      
+      <div class="label">References</div>
+      <div id="el-refs"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load the SVG inline
+fetch('bpd_state_machine.svg')
+  .then(r => r.text())
+  .then(svg => {
+    document.getElementById('svg-panel').innerHTML = svg;
+    attachClickHandlers();
+  });
+
+let currentBpdLine = null;
+
+function attachClickHandlers() {
+  // States
+  document.querySelectorAll('g[data-element-type="state"]').forEach(g => {
+    g.addEventListener('click', () => {
+      const attrs = g.dataset;
+      showInfo({
+        name: attrs.stateName || '?',
+        type: attrs.stateType || '?',
+        elementType: 'state',
+        bpdLine: attrs.bpdLine || '',
+        provSource: attrs.provSource || '',
+        provReasoning: attrs.provReasoning || ''
+      });
+    });
+  });
+  
+  // Transitions
+  document.querySelectorAll('path[data-element-type="transition"]').forEach(path => {
+    path.addEventListener('click', () => {
+      const attrs = path.dataset;
+      showInfo({
+        name: `${attrs.from} → ${attrs.to}`,
+        type: 'transition',
+        elementType: 'transition',
+        bpdLine: attrs.bpdLine || '',
+        provSource: '',
+        provReasoning: ''
+      });
+    });
+  });
+}
+
+function showInfo(info) {
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('info-content').style.display = 'block';
+  
+  document.getElementById('el-name').textContent = info.name;
+  document.getElementById('el-type').textContent = `${info.elementType} (${info.type})`;
+  
+  currentBpdLine = info.bpdLine;
+  const bpdEl = document.getElementById('el-bpd-line');
+  bpdEl.textContent = info.bpdLine ? `mcp_bridge_tier2.bpd:${info.bpdLine}` : 'not linked';
+  
+  document.getElementById('el-prov-source').textContent = info.provSource || 'none';
+  document.getElementById('el-prov-reasoning').textContent = info.provReasoning || 'none';
+  
+  // Publish to Redis via fetch to a local endpoint (if handler is running)
+  publishClickEvent(info);
+}
+
+function publishClickEvent(info) {
+  // Log to console for debugging
+  console.log('BPD Click:', info);
+}
+
+function openInEditor() {
+  if (currentBpdLine) {
+    // This would work if we had a local server endpoint
+    // For now, just highlight the info
+    alert(`Open in editor:\nmcp_bridge_tier2.bpd:${currentBpdLine}\n\nRun: zed mcp_bridge_tier2.bpd:${currentBpdLine}`);
+  }
+}
+</script>
+</body>
+</html>

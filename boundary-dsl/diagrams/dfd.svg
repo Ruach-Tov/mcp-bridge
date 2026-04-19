@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"
+     viewBox="0 0 800 600"
+     style="background: #0d1117; font-family: 'Roboto', 'Segoe UI', sans-serif;">
+
+  <defs>
+    <marker id="dfd-arrow" markerWidth="8" markerHeight="6"
+            refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8b949e" />
+    </marker>
+  </defs>
+
+  <text x="400.0" y="25" text-anchor="middle"
+        fill="#f0f6fc" font-size="14" font-weight="bold">
+    Data Flow Diagram (Yourdon)</text>
+
+  <!-- Data Flows -->
+  <path d="M 124.1261304060914,308.82522608121826 Q 177.05825797292724,334.7087101353638 235.87386959390858,331.17477391878174"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" data-bpd-line="32" />
+  <text x="175.58738695939087" y="342.0630652030457" text-anchor="middle"
+        fill="#8b949e" font-size="9">GET /sse</text>
+  <path d="M 235.87386959390858,331.17477391878174 Q 182.94174202707276,305.2912898646362 124.1261304060914,308.82522608121826"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" data-bpd-line="32" />
+  <text x="184.41261304060913" y="297.9369347969543" text-anchor="middle"
+        fill="#8b949e" font-size="9">SSE stream</text>
+  <text x="184.41261304060913" y="308.9369347969543" text-anchor="middle"
+        fill="#8b949e" font-size="9">(endpoint event)</text>
+  <path d="M 124.81519429104668,304.0741085719133 Q 298.6419638093622,334.9383980970156 475.1848057089533,335.9258914280867"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" data-bpd-line="36" />
+  <text x="297.9629457140433" y="342.40759714552337" text-anchor="middle"
+        fill="#8b949e" font-size="9">POST</text>
+  <text x="297.9629457140433" y="353.40759714552337" text-anchor="middle"
+        fill="#8b949e" font-size="9">(JSON-RPC)</text>
+  <path d="M 475.1848057089533,335.9258914280867 Q 301.3580361906378,305.0616019029844 124.81519429104668,304.0741085719133"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" data-bpd-line="36" />
+  <text x="302.0370542859567" y="297.59240285447663" text-anchor="middle"
+        fill="#8b949e" font-size="9">HTTP 202</text>
+  <path d="M 488.1801948466054,308.1801948466054 Q 470.6066017177982,269.3933982822018 431.8198051533946,251.81980515339464"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" />
+  <text x="475.9099025766973" y="264.0900974233027" text-anchor="middle"
+        fill="#8b949e" font-size="9">forward</text>
+  <text x="475.9099025766973" y="275.0900974233027" text-anchor="middle"
+        fill="#8b949e" font-size="9">request</text>
+  <path d="M 368.1801948466054,251.81980515339464 Q 329.3933982822018,269.3933982822018 311.8198051533946,308.1801948466054"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" />
+  <text x="324.0900974233027" y="264.0900974233027" text-anchor="middle"
+        fill="#8b949e" font-size="9">SSE events</text>
+  <text x="324.0900974233027" y="275.0900974233027" text-anchor="middle"
+        fill="#8b949e" font-size="9">(responses)</text>
+  <path d="M 314.5699575818819,368.80829798490157 Q 324.6355744080525,396.721936196477 353.9067232241574,401.5889360201312"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" />
+  <text x="319.8341914105689" y="402.4835957934573" text-anchor="middle"
+        fill="#8b949e" font-size="9">session_id,</text>
+  <text x="319.8341914105689" y="413.4835957934573" text-anchor="middle"
+        fill="#8b949e" font-size="9">sse_stream</text>
+  <path d="M 446.0932767758426,401.5889360201312 Q 475.3644255919475,396.721936196477 485.4300424181181,368.80829798490157"
+        fill="none" stroke="#8b949e" stroke-width="1.2"
+        marker-end="url(#dfd-arrow)"
+        data-element-type="flow" />
+  <text x="480.1658085894311" y="402.4835957934573" text-anchor="middle"
+        fill="#8b949e" font-size="9">session</text>
+  <text x="480.1658085894311" y="413.4835957934573" text-anchor="middle"
+        fill="#8b949e" font-size="9">lookup</text>
+
+  <!-- Elements -->
+  <g data-element-type="process" data-name="relay">
+    <circle cx="400.0" cy="220.0" r="45"
+            fill="#1a2332" stroke="#d2a8ff" stroke-width="2" />
+    <text x="400.0" y="211.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">Relay</text>
+    <text x="400.0" y="224.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">(bidirectional)</text>
+  </g>
+  <g data-element-type="store" data-name="session_state">
+    <line x1="340.0" y1="425.0"
+          x2="460.0" y2="425.0"
+          stroke="#7ee787" stroke-width="2" />
+    <line x1="340.0" y1="455.0"
+          x2="460.0" y2="455.0"
+          stroke="#7ee787" stroke-width="2" />
+    <text x="400.0" y="444.0" text-anchor="middle"
+          fill="#7ee787" font-size="11">Session State</text>
+  </g>
+  <g data-element-type="process" data-name="session_init">
+    <circle cx="280.0" cy="340.0" r="45"
+            fill="#1a2332" stroke="#d2a8ff" stroke-width="2" />
+    <text x="280.0" y="331.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">Session</text>
+    <text x="280.0" y="344.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">Initialization</text>
+  </g>
+  <g data-element-type="process" data-name="request_handler">
+    <circle cx="520.0" cy="340.0" r="45"
+            fill="#1a2332" stroke="#d2a8ff" stroke-width="2" />
+    <text x="520.0" y="331.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">Request</text>
+    <text x="520.0" y="344.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="11">Handler</text>
+  </g>
+  <g data-element-type="external" data-name="client">
+    <rect x="35.0" y="275.0"
+          width="90" height="50"
+          fill="#1a2332" stroke="#58a6ff" stroke-width="2" />
+    <text x="80" y="297.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="12" font-weight="bold">:client</text>
+  </g>
+  <g data-element-type="external" data-name="server">
+    <rect x="675.0" y="275.0"
+          width="90" height="50"
+          fill="#1a2332" stroke="#58a6ff" stroke-width="2" />
+    <text x="720" y="297.0" text-anchor="middle"
+          fill="#f0f6fc" font-size="12" font-weight="bold">:server</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="50" y="564" width="16" height="16" fill="#1a2332" stroke="#58a6ff" stroke-width="1.5" />
+  <text x="72" y="575" fill="#8b949e" font-size="10">External Entity</text>
+  <circle cx="208" cy="572" r="8" fill="#1a2332" stroke="#d2a8ff" stroke-width="1.5" />
+  <text x="222" y="575" fill="#8b949e" font-size="10">Process</text>
+  <line x1="320" y1="568" x2="350" y2="568" stroke="#7ee787" stroke-width="1.5" />
+  <line x1="320" y1="578" x2="350" y2="578" stroke="#7ee787" stroke-width="1.5" />
+  <text x="356" y="575" fill="#8b949e" font-size="10">Data Store</text>
+
+</svg>
